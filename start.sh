@@ -56,10 +56,10 @@ if [[ "$START_CHROMIUM" == "true" ]]; then
     >/var/data/chromium.log 2>&1 &
 fi
 
-# Run websockify on a private port and proxy it through nginx on the public Render port.
+# Run websockify on an internal port so nginx can proxy WebSocket traffic.
 websockify --web=/opt/novnc --heartbeat=30 "$WS_PORT" 127.0.0.1:5901 &
 
-# Configure nginx to expose port $PORT and proxy WebSocket upgrade requests to websockify.
-sed "s|__PORT__|${PORT}|g" /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
-
-exec nginx -g 'daemon off;'
+# Nginx must be started with a config file in a writable temp location because the
+# container runs as an unprivileged user.
+sed "s|__PORT__|${PORT}|g" /etc/nginx/nginx.conf.template > /tmp/nginx.conf
+exec nginx -c /tmp/nginx.conf -g 'daemon off;'
