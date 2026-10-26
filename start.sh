@@ -56,10 +56,12 @@ if [[ "$START_CHROMIUM" == "true" ]]; then
     >/var/data/chromium.log 2>&1 &
 fi
 
+# Create writable temporary directories for nginx's runtime state.
+mkdir -p /tmp/nginx/client_temp /tmp/nginx/proxy_temp /tmp/nginx/fastcgi_temp /tmp/nginx/uwsgi_temp /tmp/nginx/scgi_temp
+
 # Run websockify on an internal port so nginx can proxy WebSocket traffic.
 websockify --web=/opt/novnc --heartbeat=30 "$WS_PORT" 127.0.0.1:5901 &
 
-# Nginx must be started with a config file in a writable temp location because the
-# container runs as an unprivileged user.
+# Nginx must run as the current unprivileged user and use writable temp dirs.
 sed "s|__PORT__|${PORT}|g" /etc/nginx/nginx.conf.template > /tmp/nginx.conf
 exec nginx -c /tmp/nginx.conf -g 'daemon off;'
