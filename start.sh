@@ -20,6 +20,7 @@ mkdir -p "$HOME/.config"
 ln -sfn /var/data/.config/chromium "$HOME/.config/chromium"
 
 # TigerVNC stores only the first 8 password characters, as required by VNC auth.
+mkdir -p "$HOME/.vnc"
 printf '%s\n' "$VNC_PASSWORD" | vncpasswd -f > /var/data/.vnc/passwd
 chmod 600 /var/data/.vnc/passwd
 ln -sfn /var/data/.vnc/passwd "$HOME/.vnc/passwd"
