@@ -1,0 +1,9 @@
+#!/bin/sh
+unset SESSION_MANAGER
+unset DBUS_SESSION_BUS_ADDRESS
+export XDG_CURRENT_DESKTOP=XFCE
+export XDG_SESSION_DESKTOP=xfce
+export DESKTOP_SESSION=xfce
+
+# Make XFCE start as the VNC desktop session.
+exec dbus-launch --exit-with-session startxfce4

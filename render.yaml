@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: render-linux-desktop
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: VNC_PASSWORD
+        generateValue: true
+      - key: VNC_GEOMETRY
+        value: 1366x768
+      - key: START_CHROMIUM
+        value: "true"

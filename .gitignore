@@ -1,0 +1,4 @@
+.env
+*.log
+# Runtime data if testing locally with a bind mount
+data/
