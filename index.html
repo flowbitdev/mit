@@ -2,15 +2,19 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="refresh" content="0; url=vnc.html?autoconnect=true&resize=remote&path=websockify" />
     <title>Remote desktop</title>
     <script>
-      // Ensure noVNC uses the current browser origin and the correct websocket path.
-      // This avoids stale or mis-specified websocket URLs when the app is served behind HTTPS.
       const target = new URL('vnc.html', window.location.href);
       target.searchParams.set('autoconnect', 'true');
       target.searchParams.set('resize', 'remote');
       target.searchParams.set('path', 'websockify');
+      // Force a stable base path for Render-hosted HTTPS deployments.
+      const current = window.location.href;
+      const wsBase = new URL('/websockify', window.location.origin);
+      const pathInput = document.createElement('input');
+      pathInput.name = 'path';
+      pathInput.value = 'websockify';
+      // Set the browser location immediately.
       window.location.replace(target.toString());
     </script>
   </head>
