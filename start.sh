@@ -19,8 +19,13 @@ ln -sfn /var/data/Desktop "$HOME/Desktop"
 mkdir -p "$HOME/.config"
 ln -sfn /var/data/.config/chromium "$HOME/.config/chromium"
 
+# TigerVNC and X11 need a local home profile and an X authority file.
+mkdir -p "$HOME/.vnc" "$HOME/.cache"
+touch "$HOME/.Xauthority"
+chmod 600 "$HOME/.Xauthority"
+export XAUTHORITY="$HOME/.Xauthority"
+
 # TigerVNC stores only the first 8 password characters, as required by VNC auth.
-mkdir -p "$HOME/.vnc"
 printf '%s\n' "$VNC_PASSWORD" | vncpasswd -f > /var/data/.vnc/passwd
 chmod 600 /var/data/.vnc/passwd
 ln -sfn /var/data/.vnc/passwd "$HOME/.vnc/passwd"
