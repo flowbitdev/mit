@@ -5,6 +5,7 @@ set -Eeuo pipefail
 : "${VNC_GEOMETRY:=1366x768}"
 : "${VNC_PASSWORD:=change-me-now}"
 : "${START_CHROMIUM:=true}"
+: "${WS_PORT:=6080}"
 
 if [[ "$VNC_PASSWORD" == "change-me-now" || ${#VNC_PASSWORD} -lt 6 ]]; then
   echo "ERROR: Set VNC_PASSWORD to a strong password of at least 6 characters in Render environment variables." >&2
@@ -55,5 +56,10 @@ if [[ "$START_CHROMIUM" == "true" ]]; then
     >/var/data/chromium.log 2>&1 &
 fi
 
-# noVNC uses websockify to bridge browser WebSockets to TigerVNC's TCP port.
-exec websockify --web=/opt/novnc --heartbeat=30 "$PORT" 127.0.0.1:5901
+# Run websockify on a private port and proxy it through nginx on the public Render port.
+websockify --web=/opt/novnc --heartbeat=30 "$WS_PORT" 127.0.0.1:5901 &
+
+# Configure nginx to expose port $PORT and proxy WebSocket upgrade requests to websockify.
+sed "s|__PORT__|${PORT}|g" /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
+
+exec nginx -g 'daemon off;'

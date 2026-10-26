@@ -6,7 +6,8 @@ ENV DEBIAN_FRONTEND=noninteractive \
     DISPLAY=:1 \
     VNC_GEOMETRY=1366x768 \
     START_CHROMIUM=true \
-    VNC_PASSWORD=change-me-now
+    VNC_PASSWORD=change-me-now \
+    PORT=10000
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     xfce4 \
@@ -17,6 +18,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     tigervnc-tools \
     novnc \
     websockify \
+    nginx \
     ca-certificates \
     fonts-dejavu \
     fonts-liberation \
@@ -34,6 +36,7 @@ RUN useradd --create-home --shell /bin/bash --uid 1000 desktop \
 # Keep the browser UI normal (not kiosk mode) and provide a simple landing page.
 RUN cp -a /usr/share/novnc/. /opt/novnc/
 COPY index.html /opt/novnc/index.html
+COPY nginx.conf.template /etc/nginx/nginx.conf.template
 
 COPY xstartup /usr/local/bin/xstartup
 COPY start.sh /usr/local/bin/start.sh
